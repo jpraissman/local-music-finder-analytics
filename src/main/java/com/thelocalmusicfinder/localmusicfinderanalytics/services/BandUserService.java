@@ -1,6 +1,7 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateBandUserDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.BandUserEventDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.BandUserEvent;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.BandUserRepository;
@@ -22,7 +23,7 @@ public class BandUserService {
     private final UserRepository userRepository;
 
     //private final BandUserRepository bandUserRepository;
-    public List<BandUserDTO> createEvent(CreateBandUserDTO payload) {
+    public BandUserEvent createEvent(CreateBandUserDTO payload) {
         System.out.println(payload);
         Optional<User> user = userRepository.findById(payload.getUserId());
         if(user.isEmpty()){
