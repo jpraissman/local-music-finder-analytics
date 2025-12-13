@@ -1,0 +1,25 @@
+meta {
+  name: create campaign
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/api/admin/campaign/new
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "platform": "reddit",
+    "subgroup": "r/localmusic",
+    "postUrl":"https://reddit.com/localmusic/67",
+    "targetUrl":"http://localhost:3001"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

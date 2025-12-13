@@ -15,6 +15,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Create user function
+     * @param payload we take location, os, browser, and referrer and mark it as a user
+     * @return the saved user, including id
+     */
     public User createUser(CreateUserDTO payload) {
         User u = new User();
         u.setLocation(payload.getLocation());

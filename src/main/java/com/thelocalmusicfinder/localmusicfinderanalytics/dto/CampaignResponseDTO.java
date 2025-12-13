@@ -3,11 +3,8 @@ package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 @Builder
-public class CreateVideoUserDTO {
-    private UUID userId;
-    private String videoId;
+public class CampaignResponseDTO {
+    private String generatedLink;
 }

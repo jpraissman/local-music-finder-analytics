@@ -28,7 +28,7 @@ public class User {
     private String location;
 
     @CreationTimestamp
-    @Column(name="createdAt", nullable=false, updatable=false)
+    @Column(name="created_at", nullable=false, updatable=false)
     private Instant createdAt;
 
     @Column(name="referrer")

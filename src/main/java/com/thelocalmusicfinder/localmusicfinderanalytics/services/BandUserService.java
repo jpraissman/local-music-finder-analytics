@@ -24,7 +24,6 @@ public class BandUserService {
 
     //private final BandUserRepository bandUserRepository;
     public BandUserEvent createEvent(CreateBandUserDTO payload) {
-        System.out.println(payload);
         Optional<User> user = userRepository.findById(payload.getUserId());
         if(user.isEmpty()){
             throw new IllegalArgumentException("user id " + payload.getUserId() + " not present in user table");

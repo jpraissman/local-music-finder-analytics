@@ -1,6 +1,8 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
 
+import java.util.UUID;
+
 public class BandUserEventDTO {
-    private long userId;
+    private UUID userId;
     private long bandId;
 }

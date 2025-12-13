@@ -1,13 +1,14 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
+@Getter
 public class CreateUserDTO {
-    private String location;
-    private String browser;
-    private String referrer;
-    private String operatingSystem;
+    protected String location;
+    protected String browser;
+    protected String referrer;
+    protected String operatingSystem;
 }
