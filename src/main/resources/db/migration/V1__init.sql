@@ -26,15 +26,13 @@ CREATE TABLE campaign_user_event
     CONSTRAINT pk_campaignuserevent PRIMARY KEY (id)
 );
 
-CREATE TABLE users
+CREATE TABLE lmf_user
 (
-    id               UUID         NOT NULL,
-    location         VARCHAR(255) NOT NULL,
-    created_at       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    referrer         VARCHAR(255),
-    operating_system VARCHAR(255),
-    browser          VARCHAR(255),
-    CONSTRAINT pk_users PRIMARY KEY (id)
+    id          UUID NOT NULL,
+    user_agent  VARCHAR(255),
+    device_type VARCHAR(255),
+    created_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_lmf_user PRIMARY KEY (id)
 );
 
 CREATE TABLE venue_user_event
@@ -56,16 +54,16 @@ CREATE TABLE video_user_event
 );
 
 ALTER TABLE band_user_event
-    ADD CONSTRAINT FK_BANDUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+    ADD CONSTRAINT FK_BANDUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES lmf_user (id);
 
 ALTER TABLE campaign_user_event
     ADD CONSTRAINT FK_CAMPAIGNUSEREVENT_ON_CAMPAIGN FOREIGN KEY (campaign_id) REFERENCES campaign (id);
 
 ALTER TABLE campaign_user_event
-    ADD CONSTRAINT FK_CAMPAIGNUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+    ADD CONSTRAINT FK_CAMPAIGNUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES lmf_user (id);
 
 ALTER TABLE venue_user_event
-    ADD CONSTRAINT FK_VENUEUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+    ADD CONSTRAINT FK_VENUEUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES lmf_user (id);
 
 ALTER TABLE video_user_event
-    ADD CONSTRAINT FK_VIDEOUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+    ADD CONSTRAINT FK_VIDEOUSEREVENT_ON_USER FOREIGN KEY (user_id) REFERENCES lmf_user (id);

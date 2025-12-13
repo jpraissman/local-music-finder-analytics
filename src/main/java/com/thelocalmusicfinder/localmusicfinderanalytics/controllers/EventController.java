@@ -1,9 +1,10 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateBandUserDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateUserDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateVenueUserDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateVideoUserDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.BandUserEvent;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.VenueUserEvent;
@@ -16,12 +17,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -32,8 +33,6 @@ public class EventController {
     private final VenueUserService venueUserService;
     private final VideoUserService videoUserService;
     private final UserService userService;
-    //private final UserService userService;
-    //private final VenueUserService venueUserService;
 
     /// POST METHODS
     @PostMapping("/band-user")
@@ -59,9 +58,14 @@ public class EventController {
         return videoUserService.createEvent(payload);
     }
 
-    @PostMapping("/user")
-    public User createUser(@Valid @RequestBody CreateUserDTO payload) {
-        return userService.createUser(payload);
+    @PostMapping(
+            value = "/user",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CreateUserResponseDTO> createUser() {
+        User createdUser = userService.createUser();
+        CreateUserResponseDTO response = new CreateUserResponseDTO(createdUser.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 

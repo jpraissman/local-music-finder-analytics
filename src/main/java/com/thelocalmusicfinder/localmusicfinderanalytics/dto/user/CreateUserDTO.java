@@ -1,4 +1,4 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto.user;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

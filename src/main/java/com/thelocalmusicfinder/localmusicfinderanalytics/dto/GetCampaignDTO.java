@@ -1,5 +1,7 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
 
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserDTO;
+
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
@@ -10,7 +12,7 @@ import java.util.Optional;
  */
 @Data
 @SuperBuilder
-public class GetCampaignDTO extends CreateUserDTO{
+public class GetCampaignDTO extends CreateUserDTO {
     private String url;
     private Optional<String> user_id;
 }

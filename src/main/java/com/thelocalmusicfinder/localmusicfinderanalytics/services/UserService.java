@@ -1,10 +1,12 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateUserDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.context.UserContext;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.UserRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,25 +14,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserContext userContext;
 
     /**
      * Create user function
-     * @param payload we take location, os, browser, and referrer and mark it as a user
      * @return the saved user, including id
      */
-    public User createUser(CreateUserDTO payload) {
-        User u = new User();
-        u.setLocation(payload.getLocation());
-        u.setOperatingSystem(payload.getOperatingSystem());
-        u.setBrowser(payload.getBrowser());
-        u.setReferrer(payload.getReferrer());
-
-        User savedUser = userRepository.save(u);
-        System.out.println(savedUser);
-
-        return savedUser;
+    @Transactional
+    public User createUser() {
+      User u = new User();
+      u.setDeviceType(userContext.getDeviceClass());
+      u.setUserAgent(userContext.getUserAgent());
+      return userRepository.save(u);
     }
 
     public List<User> getAllUsers() {
