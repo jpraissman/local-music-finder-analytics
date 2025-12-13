@@ -37,21 +37,20 @@ public class CampaignService {
     public String createCampaign(CreateCampaignDTO payload) {
         Campaign campaign = new Campaign();
 
-        if(payload.getPlatform() == null || payload.getPlatform().isEmpty() ||
+        if(
+                payload.getPlatform() == null || payload.getPlatform().isEmpty() ||
                 payload.getSubgroup()==null || payload.getSubgroup().isEmpty() ||
-                payload.getPostUrl() == null || payload.getPostUrl().isEmpty() ||
-                payload.getTargetUrl() == null || payload.getTargetUrl().isEmpty()
+                payload.getPostMemo() == null || payload.getPostMemo().isEmpty()
         ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payload " + payload);
         }
 
         campaign.setPlatform(payload.getPlatform());
         campaign.setSubgroup(payload.getSubgroup());
-        campaign.setPostUrl(payload.getPostUrl());
-        campaign.setTargetUrl(payload.getTargetUrl());
+        campaign.setPostUrl(payload.getPostMemo());
         try{
             Campaign createdCampaign = campaignRepository.save(campaign);
-            return frontendURL.replace(" ","") + "/" + createdCampaign.getKey();
+            return createdCampaign.getKey().toString();
             } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }

@@ -39,7 +39,4 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
-
-
-
 }
