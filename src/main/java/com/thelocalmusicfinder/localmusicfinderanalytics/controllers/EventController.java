@@ -13,6 +13,7 @@ import com.thelocalmusicfinder.localmusicfinderanalytics.services.UserService;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.VenueUserService;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.VideoUserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class EventController {
 
     /// POST METHODS
     @PostMapping("/band-user")
-    public ResponseEntity<BandUserEvent> createBandUser(@RequestBody CreateBandUserDTO payload) {
+    public ResponseEntity<BandUserEvent> createBandUser(@Valid @RequestBody CreateBandUserDTO payload) {
         try {
             BandUserEvent event = bandUserService.createEvent(payload);
             return new ResponseEntity<>(event, HttpStatus.CREATED);
@@ -49,17 +50,17 @@ public class EventController {
     }
 
     @PostMapping("/venue-user")
-    public VenueUserEvent createVenueUser(@RequestBody CreateVenueUserDTO payload) {
+    public VenueUserEvent createVenueUser(@Valid @RequestBody CreateVenueUserDTO payload) {
         return venueUserService.createEvent(payload);
     }
 
     @PostMapping("/video-user")
-    public VideoUserEvent createVideoUser(@RequestBody CreateVideoUserDTO payload) {
+    public VideoUserEvent createVideoUser(@Valid @RequestBody CreateVideoUserDTO payload) {
         return videoUserService.createEvent(payload);
     }
 
     @PostMapping("/user")
-    public User createUser(@RequestBody CreateUserDTO payload) {
+    public User createUser(@Valid @RequestBody CreateUserDTO payload) {
         return userService.createUser(payload);
     }
 
