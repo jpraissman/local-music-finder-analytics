@@ -6,11 +6,14 @@ import com.thelocalmusicfinder.localmusicfinderanalytics.dto.GetCampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.GetLinkResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.CampaignService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +31,7 @@ public class AdminController {
      * @return String of link to share
      */
     @PostMapping("/campaign/new")
-    public ResponseEntity<String> createCampaign(@Valid CreateCampaignDTO payload) {
+    public ResponseEntity<String> createCampaign(@Valid @RequestBody CreateCampaignDTO payload) {
         try{
             String campResponse = campaignService.createCampaign(payload);
             return new  ResponseEntity<>(campResponse, HttpStatus.OK);

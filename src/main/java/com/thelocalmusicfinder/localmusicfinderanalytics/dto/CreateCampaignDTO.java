@@ -9,6 +9,5 @@ import lombok.Data;
 public class CreateCampaignDTO {
     private String platform;
     private String subgroup;
-    private String postUrl;
-    private String targetUrl;
+    private String postMemo;
 }
