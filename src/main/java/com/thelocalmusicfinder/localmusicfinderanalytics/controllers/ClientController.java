@@ -20,13 +20,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class ClientController {
     private final CampaignService campaignService;
 
-    @PostMapping("/campaign/get")
-    public ResponseEntity<GetLinkResponseDTO> getCampaign(GetCampaignDTO payload) {
-        try{
-            GetLinkResponseDTO res = campaignService.getLink(payload);
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        }catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        }
-    }
+//    @PostMapping("/campaign/get")
+//    public ResponseEntity<GetLinkResponseDTO> getCampaign(GetCampaignDTO payload) {
+//        try{
+//            GetLinkResponseDTO res = campaignService.getLink(payload);
+//            return new ResponseEntity<>(res, HttpStatus.OK);
+//        }catch (Exception ex) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+//        }
+//    }
 }
