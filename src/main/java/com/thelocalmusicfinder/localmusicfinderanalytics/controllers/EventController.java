@@ -1,87 +1,61 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.*;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.*;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.*;
-import jakarta.persistence.EntityNotFoundException;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateCampaignUserEventDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserResponseDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.CampaignService;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
-
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/event")
 @RequiredArgsConstructor
 public class EventController {
-    private final BandUserService bandUserService;
-    private final VenueUserService venueUserService;
-    private final VideoUserService videoUserService;
-    private final UserService userService;
-    private final CampaignService campaignService;
-    //private final UserService userService;
-    //private final VenueUserService venueUserService;
+  private final UserService userService;
+  private final CampaignService campaignService;
 
-    /// POST METHODS
-    @PostMapping("/band-user")
-    public ResponseEntity<BandUserEvent> createBandUser(@Valid @RequestBody CreateBandUserDTO payload) {
-        try {
-            BandUserEvent event = bandUserService.createEvent(payload);
-            return new ResponseEntity<>(event, HttpStatus.CREATED);
-        } catch (IllegalArgumentException | EntityNotFoundException ex) {
-            // service should throw a clear exception when user/band not found
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        }
-    }
+  @PostMapping(
+          value = "/user",
+          produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<CreateUserResponseDTO> createUser() {
+    User createdUser = userService.createUser();
+    CreateUserResponseDTO response = new CreateUserResponseDTO(createdUser.getId());
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
 
-    @PostMapping("/venue-user")
-    public VenueUserEvent createVenueUser(@Valid @RequestBody CreateVenueUserDTO payload) {
-        return venueUserService.createEvent(payload);
-    }
+  @PostMapping("/campaign-user")
+  public void createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
+    campaignService.createCampaignUserEvent(payload);
+  }
 
-    @PostMapping("/video-user")
-    public VideoUserEvent createVideoUser(@Valid @RequestBody CreateVideoUserDTO payload) {
-        return videoUserService.createEvent(payload);
-    }
+    // POST METHODS
+//    @PostMapping("/band-user")
+//    public ResponseEntity<BandUserEvent> createBandUser(@Valid @RequestBody CreateBandUserDTO payload) {
+//        try {
+//            BandUserEvent event = bandUserService.createEvent(payload);
+//            return new ResponseEntity<>(event, HttpStatus.CREATED);
+//        } catch (IllegalArgumentException | EntityNotFoundException ex) {
+//            // service should throw a clear exception when user/band not found
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+//        } catch (Exception ex) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+//        }
+//    }
 
-    @PostMapping("/user")
-    public User createUser(@Valid @RequestBody CreateUserDTO payload) {
-        return userService.createUser(payload);
-    }
-
-    @PostMapping("/campaign-user")
-    public void createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
-        campaignService.createCampaignUserEvent(payload);
-    }
-
-
-    ///  GETTERS
-
-    @GetMapping("/band-user")
-    public ResponseEntity<List<BandUserEvent>>  fetchBandUserEvents(){
-        List<BandUserEvent> bandUserEvents = bandUserService.getAllEvents();
-        return new ResponseEntity<>(bandUserEvents, HttpStatus.ACCEPTED);
-    }
-    @GetMapping("/venue-user")
-    public ResponseEntity<List<VenueUserEvent>>  fetchVenueUserEvents(){
-        List<VenueUserEvent> venueUserEvents = venueUserService.getAllEvents();
-        return new ResponseEntity<>(venueUserEvents, HttpStatus.ACCEPTED);
-    }
-    @GetMapping("/video-user")
-    public ResponseEntity<List<VideoUserEvent>>  fetchVideoUserEvents(){
-        List<VideoUserEvent> videoUserEvents = videoUserService.getAllEvents();
-        return new ResponseEntity<>(videoUserEvents, HttpStatus.ACCEPTED);
-    }
-    @GetMapping("/user")
-    public ResponseEntity<List<User>>  fetchUsers(){
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.ACCEPTED);
-    }
+//    @PostMapping("/venue-user")
+//    public VenueUserEvent createVenueUser(@Valid @RequestBody CreateVenueUserDTO payload) {
+//        return venueUserService.createEvent(payload);
+//    }
+//
+//    @PostMapping("/video-user")
+//    public VideoUserEvent createVideoUser(@Valid @RequestBody CreateVideoUserDTO payload) {
+//        return videoUserService.createEvent(payload);
+//    }
 }

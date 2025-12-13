@@ -15,11 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(
-        value = "/api/admin",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-)
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final CampaignService campaignService;
@@ -29,7 +25,11 @@ public class AdminController {
      * @param payload platform, group, and postMemo for new campaign
      * @return campaign id
      */
-    @PostMapping("/campaign")
+    @PostMapping(
+            value = "/campaign",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<CreateCampaignResponseDTO> createCampaign(@Valid @RequestBody CreateCampaignDTO payload) {
       Long campaignId = campaignService.createCampaign(payload);
       CreateCampaignResponseDTO response = new CreateCampaignResponseDTO(campaignId);
