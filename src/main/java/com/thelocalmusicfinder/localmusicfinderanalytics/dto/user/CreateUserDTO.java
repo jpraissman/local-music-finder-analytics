@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @Getter
+@NoArgsConstructor
 public class CreateUserDTO {
     protected String location;
     protected String browser;

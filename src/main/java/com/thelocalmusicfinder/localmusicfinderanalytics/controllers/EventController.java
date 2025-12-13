@@ -1,8 +1,12 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateCampaignUserEventDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.CampaignService;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.UserService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,12 +17,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/event")
 @RequiredArgsConstructor
 public class EventController {
-//    private final BandUserService bandUserService;
-//    private final VenueUserService venueUserService;
-//    private final VideoUserService videoUserService;
-    private final UserService userService;
+  private final UserService userService;
+  private final CampaignService campaignService;
 
-    /// POST METHODS
+  @PostMapping(
+          value = "/user",
+          produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<CreateUserResponseDTO> createUser() {
+    User createdUser = userService.createUser();
+    CreateUserResponseDTO response = new CreateUserResponseDTO(createdUser.getId());
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PostMapping("/campaign-user")
+  public void createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
+    campaignService.createCampaignUserEvent(payload);
+  }
+
+    // POST METHODS
 //    @PostMapping("/band-user")
 //    public ResponseEntity<BandUserEvent> createBandUser(@Valid @RequestBody CreateBandUserDTO payload) {
 //        try {
@@ -41,14 +58,4 @@ public class EventController {
 //    public VideoUserEvent createVideoUser(@Valid @RequestBody CreateVideoUserDTO payload) {
 //        return videoUserService.createEvent(payload);
 //    }
-
-    @PostMapping(
-            value = "/user",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<CreateUserResponseDTO> createUser() {
-        User createdUser = userService.createUser();
-        CreateUserResponseDTO response = new CreateUserResponseDTO(createdUser.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 }
