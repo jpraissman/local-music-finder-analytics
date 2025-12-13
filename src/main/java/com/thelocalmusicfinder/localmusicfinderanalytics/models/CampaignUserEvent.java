@@ -19,6 +19,9 @@ public class CampaignUserEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column()
+    private String url;
+
     @CreationTimestamp
     @Column(name="timestamp", updatable = false, nullable = false)
     private Instant timestamp;

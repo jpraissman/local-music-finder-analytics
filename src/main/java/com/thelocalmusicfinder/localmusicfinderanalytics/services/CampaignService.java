@@ -43,6 +43,7 @@ public class CampaignService {
         targetCampaign.ifPresent(campaignUserEvent::setCampaign);
         Optional<User> targetUser = userRepository.findById(payload.getUserId());
         targetUser.ifPresent(campaignUserEvent::setUser);
+        campaignUserEvent.setUrl(payload.getUrl());
 
         if(campaignUserEvent.getCampaign() == null || campaignUserEvent.getUser() == null) {
             throw new RuntimeException("campaign or user is null campaignID: " + payload.getCampaignId() + " userID: " + payload.getUserId());
