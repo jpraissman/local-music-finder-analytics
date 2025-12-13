@@ -1,6 +1,8 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CampaignQueryResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateCampaignUserEventDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.QueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.CampaignUserEvent;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +52,26 @@ public class CampaignService {
             throw new RuntimeException("campaign or user is null campaignID: " + payload.getCampaignId() + " userID: " + payload.getUserId());
         }
         campaignUserEventRepository.save(campaignUserEvent);
+    }
+
+    public CampaignQueryResponseDTO campaignQuery(QueryDTO payload) {
+        CampaignQueryResponseDTO res = new CampaignQueryResponseDTO();
+        List<CampaignUserEvent> dbRes = campaignUserEventRepository.findByTimestampBetween(
+                payload.getStartTime(), payload.getEndTime()
+        );
+        if(payload.getPlatform() != null && !payload.getPlatform().isEmpty()){
+            dbRes = dbRes.stream().filter((CampaignUserEvent e) ->
+                    e.getCampaign().getPlatform().equals(payload.getPlatform())).toList();
+        }
+        if(payload.getSubgroup() != null && !payload.getSubgroup().isEmpty()){
+            dbRes = dbRes.stream().filter((CampaignUserEvent e) ->
+                    e.getCampaign().getSubgroup().equals(payload.getSubgroup())).toList();
+        }
+        if(payload.getPostMemo() != null && !payload.getPostMemo().isEmpty()){
+            dbRes = dbRes.stream().filter((CampaignUserEvent e) ->
+                    e.getCampaign().getPostMemo().equals(payload.getPostMemo())).toList();
+        }
+
+        //return dbRes;
     }
 }

@@ -30,7 +30,7 @@ public class CampaignUserEvent {
     @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="campaign_id")
     private Campaign campaign;
 }
