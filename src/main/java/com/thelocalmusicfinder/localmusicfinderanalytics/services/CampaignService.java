@@ -12,6 +12,7 @@ import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.UserReposi
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,13 +44,9 @@ public class CampaignService {
         Optional<User> targetUser = userRepository.findById(payload.getUserId());
         targetUser.ifPresent(campaignUserEvent::setUser);
 
+        if(campaignUserEvent.getCampaign() == null || campaignUserEvent.getUser() == null) {
+            throw new RuntimeException("campaign or user is null campaignID: " + payload.getCampaignId() + " userID: " + payload.getUserId());
+        }
         campaignUserEventRepository.save(campaignUserEvent);
-    }
-
-    public List<CampaignUserEvent> getAllEvents(){
-        return campaignUserEventRepository.findAll();
-    }
-    public List<Campaign> getAllCampaigns(){
-        return campaignRepository.findAll();
     }
 }

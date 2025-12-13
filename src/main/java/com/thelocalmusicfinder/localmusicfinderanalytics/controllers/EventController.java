@@ -84,14 +84,4 @@ public class EventController {
         List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.ACCEPTED);
     }
-    @GetMapping("/campaign-user")
-    public ResponseEntity<List<CampaignUserEvent>>  fetchCampaignUserEvents(){
-        List<CampaignUserEvent> campaignUserEvents = campaignService.getAllEvents();
-        return new ResponseEntity<>(campaignUserEvents, HttpStatus.ACCEPTED);
-    }
-    @GetMapping("/campaign")
-    public ResponseEntity<List<Campaign>>  fetchCampaigns(){
-        List<Campaign> campaigns = campaignService.getAllCampaigns();
-        return new ResponseEntity<>(campaigns, HttpStatus.ACCEPTED);
-    }
 }
