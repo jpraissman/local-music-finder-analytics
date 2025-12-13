@@ -1,42 +1,38 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CampaignResponseDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateCampaignDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.GetCampaignDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.GetLinkResponseDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.CampaignService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping(
+        value = "/api/admin",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+)
 @RequiredArgsConstructor
 public class AdminController {
     private final CampaignService campaignService;
 
     /**
-     * Used to create a new campaign, used by C-level executives only
-     * @param payload platform, group, postURL, and targetURL for new campaign
-     * @return String of link to share
+     * Used to create a new campaign
+     * @param payload platform, group, and postMemo for new campaign
+     * @return campaign id
      */
-    @PostMapping("/campaign/new")
-    public ResponseEntity<String> createCampaign(@Valid @RequestBody CreateCampaignDTO payload) {
-        try{
-            String campResponse = campaignService.createCampaign(payload);
-            return new  ResponseEntity<>(campResponse, HttpStatus.OK);
-        } catch(Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        }
+    @PostMapping("/campaign")
+    public ResponseEntity<CreateCampaignResponseDTO> createCampaign(@Valid @RequestBody CreateCampaignDTO payload) {
+      Long campaignId = campaignService.createCampaign(payload);
+      CreateCampaignResponseDTO response = new CreateCampaignResponseDTO(campaignId);
+      return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
     }
 }

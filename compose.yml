@@ -7,7 +7,7 @@ services:
     container_name: psql-db # A fixed name for easier identification
     ports:
       # Map container port 5432 to host port 5432 (optional, but useful for GUI tools like DBeaver)
-      - "5432:5432"
+      - "5433:5432"
     environment:
       # Required environment variables for PostgreSQL Docker image
       POSTGRES_DB: lmf-analytics      # The database name (used in Spring URL)
