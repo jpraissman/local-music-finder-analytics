@@ -1,0 +1,23 @@
+meta {
+  name: create campaign-user event
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/api/event/campaign-user
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId":"850cb8ba-bd01-4ddf-99e2-aa55c6065ae4",
+    "campaignId":1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

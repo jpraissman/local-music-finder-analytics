@@ -1,17 +1,8 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateBandUserDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateUserDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateVenueUserDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateVideoUserDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.BandUserEvent;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.VenueUserEvent;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.VideoUserEvent;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.BandUserService;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.UserService;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.VenueUserService;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.VideoUserService;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.*;
+import com.thelocalmusicfinder.localmusicfinderanalytics.models.*;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +23,7 @@ public class EventController {
     private final VenueUserService venueUserService;
     private final VideoUserService videoUserService;
     private final UserService userService;
+    private final CampaignService campaignService;
     //private final UserService userService;
     //private final VenueUserService venueUserService;
 
@@ -62,6 +54,11 @@ public class EventController {
     @PostMapping("/user")
     public User createUser(@Valid @RequestBody CreateUserDTO payload) {
         return userService.createUser(payload);
+    }
+
+    @PostMapping("/campaign-user")
+    public void createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
+        campaignService.createCampaignUserEvent(payload);
     }
 
 
