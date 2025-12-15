@@ -1,5 +1,6 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.queryresponse.CampaignQueryResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateCampaignUserEventDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CampaignUserQueryDTO;
@@ -65,6 +66,17 @@ public class CampaignService {
             throw new RuntimeException("campaign or user is null campaignID: " + payload.getCampaignId() + " userID: " + payload.getUserId());
         }
         campaignUserEventRepository.save(campaignUserEvent);
+    }
+
+    public List<CampaignDTO> getAllCampaigns() {
+      List<Campaign> campaigns = campaignRepository.findAll();
+      List<CampaignDTO> campaignDTOs = new ArrayList<>();
+      for (Campaign campaign : campaigns) {
+        CampaignDTO campaignDTO = new CampaignDTO(
+                campaign.getPlatform(), campaign.getSubgroup(), campaign.getPostMemo());
+        campaignDTOs.add(campaignDTO);
+      }
+      return campaignDTOs;
     }
 
     public CampaignQueryResponseDTO campaignQuery(CampaignUserQueryDTO payload) {

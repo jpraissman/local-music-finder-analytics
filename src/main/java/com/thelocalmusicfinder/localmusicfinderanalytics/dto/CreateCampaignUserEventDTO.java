@@ -14,7 +14,7 @@ public class CreateCampaignUserEventDTO {
   private UUID userId;
 
   @NotNull
-  private Long  campaignId;
+  private Long campaignId;
 
   @NotBlank
   private String url;

@@ -1,5 +1,6 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.queryresponse.CampaignQueryResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CampaignUserQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignDTO;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -34,6 +37,12 @@ public class AdminController {
       Long campaignId = campaignService.findOrCreateCampaign(payload);
       CreateCampaignResponseDTO response = new CreateCampaignResponseDTO(campaignId);
       return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
+    }
+
+    @GetMapping("/campaigns")
+    public ResponseEntity<List<CampaignDTO>> getAllCampaigns() {
+      List<CampaignDTO> response = campaignService.getAllCampaigns();
+      return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // filter campaignuserevents by date, platform, post, etc
