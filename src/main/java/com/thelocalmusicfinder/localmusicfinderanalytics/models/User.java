@@ -27,6 +27,9 @@ public class User {
     @Column()
     private String deviceType;
 
+    @Column()
+    private String ipAddress;
+
     @CreationTimestamp
     @Column(nullable=false, updatable=false)
     private Instant createdAt;

@@ -26,6 +26,7 @@ public class UserService {
       User u = new User();
       u.setDeviceType(userContext.getDeviceClass());
       u.setUserAgent(userContext.getUserAgent());
+      u.setIpAddress(userContext.getIpAddress());
       return userRepository.save(u);
     }
 

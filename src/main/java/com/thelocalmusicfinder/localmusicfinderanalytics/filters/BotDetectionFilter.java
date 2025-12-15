@@ -34,9 +34,10 @@ public class BotDetectionFilter extends OncePerRequestFilter {
 
     UserAgent userAgent = uaa.parse(userAgentString == null ? "" : userAgentString);
 
-    boolean isBot = userAgent.getValue("DeviceClass").equals("Robot");
+    boolean isBot = userAgent.getValue("DeviceClass").contains("Robot");
     userContext.setUserAgent(userAgentString);
     userContext.setDeviceClass(userAgent.getValue("DeviceClass"));
+    userContext.setIpAddress(request.getHeader("X-Forwarded-For"));
     userContext.setBot(isBot);
 
     if (isBot) {

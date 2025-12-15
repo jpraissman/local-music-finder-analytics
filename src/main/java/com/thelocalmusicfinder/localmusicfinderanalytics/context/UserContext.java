@@ -11,5 +11,6 @@ import lombok.Data;
 public class UserContext {
   private String userAgent;
   private String deviceClass;
+  private String ipAddress;
   private boolean isBot;
 }
