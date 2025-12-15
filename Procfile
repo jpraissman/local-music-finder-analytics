@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar target/TheLocalMusicFinderBackend-0.0.1-SNAPSHOT.jar
+web: java -Dserver.port=$PORT -jar target/local-music-finder-analytics-0.0.1-SNAPSHOT.jar
