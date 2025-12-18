@@ -35,12 +35,16 @@ public class EventController {
 
   @PostMapping("/campaign-user")
   public ResponseEntity<Void> createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
+    userService.updateUserUsingContext(payload.getUserId());
+
     campaignUserService.createCampaignUserEvent(payload);
     return ResponseEntity.ok().build();
   }
 
   @PostMapping("/search-user")
   public ResponseEntity<Void> createSearchUserEvent(@Valid @RequestBody CreateSearchUserEventDTO payload) {
+    userService.updateUserUsingContext(payload.getUserId());
+
     searchUserService.createSearchUserEvent(payload);
     return ResponseEntity.ok().build();
   }

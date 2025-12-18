@@ -1,7 +1,6 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.context.UserContext;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.UserRepository;
 
@@ -10,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,21 @@ public class UserService {
       return userRepository.save(u);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @Transactional
+    public void updateUserUsingContext(UUID userId) {
+      Optional<User> user = userRepository.findById(userId);
+      if (user.isPresent()) {
+        User u = user.get();
+        String curIpAddresses = u.getIpAddress();
+        if (curIpAddresses == null) {
+          u.setIpAddress(userContext.getIpAddress());
+        }
+        else {
+          String newIpAddress = userContext.getIpAddress();
+          if (!curIpAddresses.contains(newIpAddress)) {
+            u.setIpAddress(curIpAddresses + "///" + newIpAddress);
+          }
+        }
+      }
     }
 }

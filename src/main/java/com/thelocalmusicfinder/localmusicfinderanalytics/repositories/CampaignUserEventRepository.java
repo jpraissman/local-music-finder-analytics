@@ -15,6 +15,7 @@ public interface CampaignUserEventRepository extends JpaRepository<CampaignUserE
     JOIN FETCH e.user u
     WHERE e.timestamp >= :start
       AND e.timestamp < :end
+      AND u.isAdmin = false
       AND (:platform IS NULL OR c.platform = :platform)
       AND (:subgroup IS NULL OR c.subgroup = :subgroup)
       AND (:postMemo IS NULL OR c.postMemo = :postMemo)
