@@ -37,11 +37,11 @@ public class UserService {
       if (user.isPresent()) {
         User u = user.get();
         String curIpAddresses = u.getIpAddress();
+        String newIpAddress = userContext.getIpAddress();
         if (curIpAddresses == null) {
           u.setIpAddress(userContext.getIpAddress());
         }
-        else {
-          String newIpAddress = userContext.getIpAddress();
+        else if (newIpAddress != null) {
           if (!curIpAddresses.contains(newIpAddress)) {
             u.setIpAddress(curIpAddresses + "///" + newIpAddress);
           }
