@@ -30,7 +30,7 @@ public class User {
     @Column()
     private String ipAddress;
 
-    @Column(nullable = false)
+    @Column()
     private boolean isAdmin;
 
     @CreationTimestamp
