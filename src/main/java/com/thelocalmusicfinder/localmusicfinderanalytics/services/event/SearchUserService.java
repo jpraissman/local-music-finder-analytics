@@ -43,6 +43,7 @@ public class SearchUserService {
     Optional<User> targetUser = userRepository.findById(payload.getUserId());
     targetUser.ifPresent(searchUserEvent::setUser);
     searchUserEvent.setLocationId(payload.getLocationId());
+    searchUserEvent.setSearchContext(payload.getSearchContext());
 
     if(searchUserEvent.getCampaign() == null || searchUserEvent.getUser() == null) {
       throw new RuntimeException("campaign or user is null campaignID: " + payload.getCampaignId() + " userID: " + payload.getUserId());
@@ -65,11 +66,12 @@ public class SearchUserService {
     List<QueryDetail> counties = getQueryDetails(DetailType.COUNTY, events);
     List<QueryDetail> towns = getQueryDetails(DetailType.TOWN, events);
     List<QueryDetail> formattedAddresses = getQueryDetails(DetailType.ADDRESS, events);
+    List<QueryDetail> searchContexts = getQueryDetails(DetailType.SEARCH_CONTEXT, events);
 
     int totalSearches = events.size();
     int uniqueUsersWhoSearched = getUniqueUsersWhoSearched(events);
 
-    return new SearchUserQueryResponseDTO(totalSearches, uniqueUsersWhoSearched, counties, towns, formattedAddresses);
+    return new SearchUserQueryResponseDTO(totalSearches, uniqueUsersWhoSearched, counties, towns, formattedAddresses, searchContexts);
   }
 
   private int getUniqueUsersWhoSearched(List<SearchUserEvent> events) {
@@ -90,16 +92,19 @@ public class SearchUserService {
   }
 
   private String convertTypeToString(DetailType type, SearchUserEvent searchUserEvent) {
-    return switch (type) {
+    String result = switch (type) {
       case ADDRESS -> searchUserEvent.getFormattedAddress();
-      case TOWN -> searchUserEvent.getTown() == null ? "Unknown" : searchUserEvent.getTown();
-      case COUNTY -> searchUserEvent.getCounty() == null ? "Unknown" : searchUserEvent.getCounty();
+      case TOWN -> searchUserEvent.getTown();
+      case COUNTY -> searchUserEvent.getCounty();
+      case SEARCH_CONTEXT -> searchUserEvent.getSearchContext();
     };
+    return result == null ? "Unknown" : result;
   }
 }
 
 enum DetailType {
   COUNTY,
   TOWN,
-  ADDRESS
+  ADDRESS,
+  SEARCH_CONTEXT
 }

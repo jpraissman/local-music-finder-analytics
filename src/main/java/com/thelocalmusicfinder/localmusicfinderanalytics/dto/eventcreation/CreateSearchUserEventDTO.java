@@ -18,4 +18,7 @@ public class CreateSearchUserEventDTO {
 
   @NotBlank
   private String locationId;
+
+  @NotBlank
+  private String searchContext;
 }

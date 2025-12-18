@@ -17,4 +17,5 @@ public class SearchUserQueryResponseDTO {
   private List<QueryDetail> counties;
   private List<QueryDetail> towns;
   private List<QueryDetail> formattedAddresses;
+  private List<QueryDetail> searchContexts;
 }

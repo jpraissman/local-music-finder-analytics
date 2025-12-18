@@ -39,6 +39,9 @@ public class SearchUserEvent {
   @Column()
   private String county;
 
+  @Column()
+  private String searchContext;
+
   @CreationTimestamp
   @Column(name="timestamp", updatable = false, nullable = false)
   private Instant timestamp;
