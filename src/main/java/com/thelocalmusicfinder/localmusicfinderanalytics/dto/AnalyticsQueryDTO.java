@@ -1,4 +1,4 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign;
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class CampaignUserQueryDTO {
+public class AnalyticsQueryDTO {
   @NotNull
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   @JsonFormat(pattern = "yyyy-MM-dd")

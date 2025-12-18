@@ -1,0 +1,12 @@
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class QueryDetail {
+  private String name;
+  private int total;
+  private int totalUnique;
+}

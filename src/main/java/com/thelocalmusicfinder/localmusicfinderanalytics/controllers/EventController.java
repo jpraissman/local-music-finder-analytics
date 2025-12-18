@@ -1,9 +1,11 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateCampaignUserEventDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateCampaignUserEventDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateSearchUserEventDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.user.CreateUserResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.CampaignService;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.event.CampaignUserService;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.event.SearchUserService;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.UserService;
 
 import jakarta.validation.Valid;
@@ -18,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class EventController {
   private final UserService userService;
-  private final CampaignService campaignService;
+  private final SearchUserService  searchUserService;
+  private final CampaignUserService  campaignUserService;
 
   @PostMapping(
           value = "/user",
@@ -31,8 +34,15 @@ public class EventController {
   }
 
   @PostMapping("/campaign-user")
-  public void createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
-    campaignService.createCampaignUserEvent(payload);
+  public ResponseEntity<Void> createCampaignUserEvent(@Valid @RequestBody CreateCampaignUserEventDTO payload) {
+    campaignUserService.createCampaignUserEvent(payload);
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/search-user")
+  public ResponseEntity<Void> createSearchUserEvent(@Valid @RequestBody CreateSearchUserEventDTO payload) {
+    searchUserService.createSearchUserEvent(payload);
+    return ResponseEntity.ok().build();
   }
 
     // POST METHODS
