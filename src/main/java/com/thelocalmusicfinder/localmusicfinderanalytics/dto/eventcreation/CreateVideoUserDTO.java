@@ -1,4 +1,4 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation;
 
 import lombok.Builder;
 import lombok.Data;

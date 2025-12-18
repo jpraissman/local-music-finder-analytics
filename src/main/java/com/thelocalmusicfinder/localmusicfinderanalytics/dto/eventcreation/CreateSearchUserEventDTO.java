@@ -1,15 +1,15 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation;
+
+import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 @Builder
-public class CreateCampaignUserEventDTO {
+public class CreateSearchUserEventDTO {
   @NotNull
   private UUID userId;
 
@@ -17,5 +17,5 @@ public class CreateCampaignUserEventDTO {
   private Long campaignId;
 
   @NotBlank
-  private String url;
+  private String locationId;
 }

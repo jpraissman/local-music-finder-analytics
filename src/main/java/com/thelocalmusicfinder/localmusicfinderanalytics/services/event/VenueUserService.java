@@ -1,6 +1,6 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.services;
+package com.thelocalmusicfinder.localmusicfinderanalytics.services.event;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.CreateVenueUserDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateVenueUserDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.VenueUserEvent;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.UserRepository;
