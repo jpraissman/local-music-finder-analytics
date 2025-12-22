@@ -1,4 +1,4 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse;
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

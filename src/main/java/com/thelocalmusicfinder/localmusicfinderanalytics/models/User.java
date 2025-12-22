@@ -19,7 +19,7 @@ import java.util.UUID;
 @Table(name = "lmf_user")
 public class User {
     @Id
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     @Column()
     private String userAgent;
@@ -38,10 +38,6 @@ public class User {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL)
-    private List<VenueUserEvent> venueUserEvents;
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL)
-    private List<VideoUserEvent> videoUserEvents;
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL)
-    private List<BandUserEvent> bandUserEvents;
+    private List<Session> sessions;
 }
 

@@ -1,4 +1,4 @@
-package com.thelocalmusicfinder.localmusicfinderanalytics.dto;
+package com.thelocalmusicfinder.localmusicfinderanalytics.dto.query;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -28,4 +28,8 @@ public class AnalyticsQueryDTO {
   private String subgroup;
 
   private String postMemo;
+
+  private Boolean includeAdmin;
+
+  private Integer minDurationInSec;
 }

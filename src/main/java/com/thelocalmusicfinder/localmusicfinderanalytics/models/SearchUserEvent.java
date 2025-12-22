@@ -53,4 +53,8 @@ public class SearchUserEvent {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name="campaign_id")
   private Campaign campaign;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name="session_id")
+  private Session session;
 }

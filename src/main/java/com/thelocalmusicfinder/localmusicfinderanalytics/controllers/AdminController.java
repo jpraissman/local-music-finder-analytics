@@ -1,13 +1,14 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.controllers;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CampaignDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse.campaign.CampaignUserQueryResponseDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.AnalyticsQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignResponseDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse.searchuser.SearchUserQueryResponseDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.SearchUserQueryResponseDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.SessionQueryResponseDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.CampaignService;
-import com.thelocalmusicfinder.localmusicfinderanalytics.services.event.CampaignUserService;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.SessionService;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.event.SearchUserService;
 
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final CampaignService campaignService;
-    private final CampaignUserService campaignUserService;
+    private final SessionService sessionService;
     private final SearchUserService searchUserService;
 
     /**
@@ -39,8 +40,8 @@ public class AdminController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<CreateCampaignResponseDTO> findOrCreateCampaign(@Valid @RequestBody CreateCampaignDTO payload) {
-      Long campaignId = campaignService.findOrCreateCampaign(payload);
-      CreateCampaignResponseDTO response = new CreateCampaignResponseDTO(campaignId);
+      Campaign campaign = campaignService.findOrCreateCampaign(payload);
+      CreateCampaignResponseDTO response = new CreateCampaignResponseDTO(campaign.getId());
       return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
@@ -50,9 +51,9 @@ public class AdminController {
       return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping(value="/query/campaign-user")
-    public ResponseEntity<CampaignUserQueryResponseDTO> campaignUserQuery(@Valid @RequestBody AnalyticsQueryDTO payload) {
-        CampaignUserQueryResponseDTO responseDTO = campaignUserService.query(payload);
+    @PostMapping(value="/query/session")
+    public ResponseEntity<SessionQueryResponseDTO> campaignUserQuery(@Valid @RequestBody AnalyticsQueryDTO payload) {
+        SessionQueryResponseDTO responseDTO = sessionService.query(payload);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
@@ -60,5 +61,11 @@ public class AdminController {
     public ResponseEntity<SearchUserQueryResponseDTO> searchUserQuery(@Valid @RequestBody AnalyticsQueryDTO payload) {
       SearchUserQueryResponseDTO responseDTO = searchUserService.query(payload);
       return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @GetMapping("/query/session/{sessionId}/logs")
+    public ResponseEntity<String> getSessionLogs(@PathVariable("sessionId") Long sessionId) {
+      String sessionLogs = sessionService.getSessionLogs(sessionId);
+      return ResponseEntity.status(HttpStatus.OK).body(sessionLogs);
     }
 }

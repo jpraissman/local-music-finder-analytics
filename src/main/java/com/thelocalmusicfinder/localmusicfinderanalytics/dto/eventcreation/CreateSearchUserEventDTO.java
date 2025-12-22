@@ -13,9 +13,6 @@ public class CreateSearchUserEventDTO {
   @NotNull
   private UUID userId;
 
-  @NotNull
-  private Long campaignId;
-
   @NotBlank
   private String locationId;
 

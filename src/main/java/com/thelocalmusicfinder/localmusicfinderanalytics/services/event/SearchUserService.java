@@ -2,21 +2,22 @@ package com.thelocalmusicfinder.localmusicfinderanalytics.services.event;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.LocationInfo;
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithUserId;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.AnalyticsQueryDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateSearchUserEventDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse.QueryDetail;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse.searchuser.SearchUserQueryResponseDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.QueryDetail;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.SearchUserQueryResponseDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.SearchUserEvent;
+import com.thelocalmusicfinder.localmusicfinderanalytics.models.Session;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
-import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.CampaignRepository;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.SearchUserRepository;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.UserRepository;
 import com.thelocalmusicfinder.localmusicfinderanalytics.services.LocationService;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.SessionService;
 import com.thelocalmusicfinder.localmusicfinderanalytics.util.QueryResponseUtils;
 
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,23 +31,28 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SearchUserService {
   private final SearchUserRepository searchUserRepository;
-  private final CampaignRepository campaignRepository;
   private final UserRepository userRepository;
   private final LocationService locationService;
+  private final SessionService sessionService;
 
   @Transactional
   public void createSearchUserEvent(CreateSearchUserEventDTO payload) {
+    Optional<Session> optionalSession = sessionService.getActiveSession(payload.getUserId());
+    if (optionalSession.isEmpty()) {
+      return;
+    }
+
     SearchUserEvent searchUserEvent = new SearchUserEvent();
 
-    Optional<Campaign> targetCampaign = campaignRepository.findById(payload.getCampaignId());
-    targetCampaign.ifPresent(searchUserEvent::setCampaign);
     Optional<User> targetUser = userRepository.findById(payload.getUserId());
     targetUser.ifPresent(searchUserEvent::setUser);
+    searchUserEvent.setSession(optionalSession.get());
+    searchUserEvent.setCampaign(optionalSession.get().getCampaign());
     searchUserEvent.setLocationId(payload.getLocationId());
     searchUserEvent.setSearchContext(payload.getSearchContext());
 
-    if(searchUserEvent.getCampaign() == null || searchUserEvent.getUser() == null) {
-      throw new RuntimeException("campaign or user is null campaignID: " + payload.getCampaignId() + " userID: " + payload.getUserId());
+    if(searchUserEvent.getUser() == null) {
+      throw new RuntimeException("user is null. Given userID: " + payload.getUserId());
     }
 
     LocationInfo locationInfo = locationService.getLocationById(payload.getLocationId());
@@ -61,17 +67,34 @@ public class SearchUserService {
     Instant startInstant = QueryResponseUtils.getStartInstant(query);
     Instant endInstant = QueryResponseUtils.getEndInstant(query);
     List<SearchUserEvent> events = searchUserRepository.findEvents(startInstant, endInstant,
-            query.getPlatform(), query.getSubgroup(), query.getPostMemo());
+            query.getIncludeAdmin(), query.getPlatform(), query.getSubgroup(), query.getPostMemo());
 
-    List<QueryDetail> counties = getQueryDetails(DetailType.COUNTY, events);
-    List<QueryDetail> towns = getQueryDetails(DetailType.TOWN, events);
-    List<QueryDetail> formattedAddresses = getQueryDetails(DetailType.ADDRESS, events);
-    List<QueryDetail> searchContexts = getQueryDetails(DetailType.SEARCH_CONTEXT, events);
+    // filter events by min duration
+    List<SearchUserEvent> filteredEvents = new ArrayList<>();
+    for (SearchUserEvent event : events) {
+      long durationInSec = Duration.between(event.getSession().getSessionStart(), event.getSession().getLastSessionActivity()).getSeconds();
+      if (durationInSec > query.getMinDurationInSec()) {
+        filteredEvents.add(event);
+      }
+    }
 
-    int totalSearches = events.size();
-    int uniqueUsersWhoSearched = getUniqueUsersWhoSearched(events);
+    List<QueryDetail> sublayerDetails = query.getPostMemo() == null ? this.getSublayerDetails(filteredEvents, query) : List.of();
+    List<QueryDetail> counties = getQueryDetails(DetailType.COUNTY, filteredEvents);
+    List<QueryDetail> towns = getQueryDetails(DetailType.TOWN, filteredEvents);
+    List<QueryDetail> formattedAddresses = getQueryDetails(DetailType.ADDRESS, filteredEvents);
+    List<QueryDetail> searchContexts = getQueryDetails(DetailType.SEARCH_CONTEXT, filteredEvents);
 
-    return new SearchUserQueryResponseDTO(totalSearches, uniqueUsersWhoSearched, counties, towns, formattedAddresses, searchContexts);
+    int totalSearches = filteredEvents.size();
+    int uniqueUsersWhoSearched = getUniqueUsersWhoSearched(filteredEvents);
+
+    return SearchUserQueryResponseDTO.builder()
+            .sublayerDetails(sublayerDetails)
+            .total(totalSearches)
+            .totalUnique(uniqueUsersWhoSearched)
+            .searchContexts(searchContexts)
+            .formattedAddresses(formattedAddresses)
+            .counties(counties)
+            .towns(towns).build();
   }
 
   private int getUniqueUsersWhoSearched(List<SearchUserEvent> events) {
@@ -89,6 +112,15 @@ public class SearchUserService {
       nameWithUserIds.add(new NameWithUserId(name, event.getUser().getId()));
     }
     return QueryResponseUtils.generateQueryDetailList(nameWithUserIds);
+  }
+
+  private List<QueryDetail> getSublayerDetails(List<SearchUserEvent> events, AnalyticsQueryDTO query) {
+    List<NameWithUserId> sublayerNamesWithUserIds = new ArrayList<>();
+    for (SearchUserEvent event : events) {
+      String sublayerName = QueryResponseUtils.getSublayerName(event.getCampaign(), query);
+      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, event.getUser().getId()));
+    }
+    return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }
 
   private String convertTypeToString(DetailType type, SearchUserEvent searchUserEvent) {
