@@ -8,7 +8,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,34 +17,28 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserContext userContext;
 
-    /**
-     * Create user function
-     * @return the saved user, including id
-     */
     @Transactional
-    public User createUser() {
-      User u = new User();
-      u.setDeviceType(userContext.getDeviceClass());
-      u.setUserAgent(userContext.getUserAgent());
-      u.setIpAddress(userContext.getIpAddress());
-      return userRepository.save(u);
+    public User upsertUser(UUID userId) {
+      Optional<User> optionalUser = userRepository.findById(userId);
+      if (optionalUser.isPresent()) {
+        User user = optionalUser.get();
+        user.setDeviceType(getNewColumnValue(user.getDeviceType(), userContext.getDeviceClass()));
+        user.setUserAgent(getNewColumnValue(user.getUserAgent(), userContext.getUserAgent()));
+        user.setIpAddress(getNewColumnValue(user.getIpAddress(), userContext.getIpAddress()));
+        return user;
+      }
+
+      User user = new User();
+      user.setId(userId);
+      user.setDeviceType(userContext.getDeviceClass());
+      user.setUserAgent(userContext.getUserAgent());
+      user.setIpAddress(userContext.getIpAddress());
+      return userRepository.save(user);
     }
 
-    @Transactional
-    public void updateUserUsingContext(UUID userId) {
-      Optional<User> user = userRepository.findById(userId);
-      if (user.isPresent()) {
-        User u = user.get();
-        String curIpAddresses = u.getIpAddress();
-        String newIpAddress = userContext.getIpAddress();
-        if (curIpAddresses == null) {
-          u.setIpAddress(userContext.getIpAddress());
-        }
-        else if (newIpAddress != null) {
-          if (!curIpAddresses.contains(newIpAddress)) {
-            u.setIpAddress(curIpAddresses + "///" + newIpAddress);
-          }
-        }
-      }
+    private String getNewColumnValue(String curValue, String newValue) {
+      if (newValue == null) return curValue;
+      if (curValue == null || curValue.contains(newValue)) return newValue;
+      return curValue + "///" + newValue;
     }
 }

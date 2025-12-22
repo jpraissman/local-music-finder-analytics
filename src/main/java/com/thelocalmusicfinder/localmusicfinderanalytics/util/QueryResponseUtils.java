@@ -1,8 +1,9 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.util;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithUserId;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.AnalyticsQueryDTO;
-import com.thelocalmusicfinder.localmusicfinderanalytics.dto.queryresponse.QueryDetail;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.QueryDetail;
+import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -24,6 +25,19 @@ public class QueryResponseUtils {
   public static Instant getEndInstant(AnalyticsQueryDTO query) {
     ZoneId eastern = ZoneId.of("America/New_York");
     return query.getEndDate().plusDays(1).atStartOfDay(eastern).toInstant();
+  }
+
+  public static String getSublayerName(Campaign campaign, AnalyticsQueryDTO query) {
+    if (query.getPlatform() == null) {
+      return campaign.getPlatform();
+    }
+    if (query.getSubgroup() == null) {
+      return campaign.getSubgroup();
+    }
+    if (query.getPostMemo() == null) {
+      return campaign.getPostMemo();
+    }
+    return null;
   }
 
   public static int getTotalUnique(List<UUID> userIds) {

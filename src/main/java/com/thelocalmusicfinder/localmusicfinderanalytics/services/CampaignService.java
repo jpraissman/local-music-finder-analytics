@@ -20,19 +20,18 @@ public class CampaignService {
     private final CampaignRepository campaignRepository;
 
     @Transactional
-    public Long findOrCreateCampaign(CreateCampaignDTO payload) {
+    public Campaign findOrCreateCampaign(CreateCampaignDTO payload) {
       Optional<Campaign> foundCampaign = campaignRepository.findCampaignByPlatformAndSubgroupAndPostMemo(
               payload.getPlatform(), payload.getSubgroup(), payload.getPostMemo());
       if (foundCampaign.isPresent()) {
-        return foundCampaign.get().getId();
+        return foundCampaign.get();
       }
 
       Campaign campaign = new Campaign();
       campaign.setPlatform(payload.getPlatform());
       campaign.setSubgroup(payload.getSubgroup());
       campaign.setPostMemo(payload.getPostMemo());
-      Campaign createdCampaign = campaignRepository.save(campaign);
-      return createdCampaign.getId();
+      return campaignRepository.save(campaign);
     }
 
     public List<CampaignDTO> getAllCampaigns() {

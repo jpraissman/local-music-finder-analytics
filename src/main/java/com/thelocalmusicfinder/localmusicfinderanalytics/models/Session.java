@@ -14,17 +14,25 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CampaignUserEvent {
+public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column()
-    private String url;
+    private String urlEntry;
 
     @CreationTimestamp
-    @Column(name="timestamp", updatable = false, nullable = false)
-    private Instant timestamp;
+    @Column(updatable = false, nullable = false)
+    private Instant sessionStart;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private Instant lastSessionActivity;
+
+    @Column(columnDefinition = "TEXT")
+    @Basic(fetch = FetchType.LAZY)
+    private String sessionActivityOverview;
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="user_id")

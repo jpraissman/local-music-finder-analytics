@@ -12,14 +12,16 @@ public interface SearchUserRepository extends JpaRepository<SearchUserEvent, Lon
   @Query("""
     SELECT DISTINCT e
     FROM SearchUserEvent e
+    JOIN FETCH e.session s
     JOIN FETCH e.campaign c
     JOIN FETCH e.user u
     WHERE e.timestamp >= :start
       AND e.timestamp < :end
-      AND u.isAdmin = false
+      AND (:includeAdmins IS TRUE OR u.isAdmin = false)
       AND (:platform IS NULL OR c.platform = :platform)
       AND (:subgroup IS NULL OR c.subgroup = :subgroup)
       AND (:postMemo IS NULL OR c.postMemo = :postMemo)
     """)
-  List<SearchUserEvent> findEvents(Instant start, Instant end, String platform, String subgroup, String postMemo);
+  List<SearchUserEvent> findEvents(Instant start, Instant end, boolean includeAdmins,
+                                   String platform, String subgroup, String postMemo);
 }
