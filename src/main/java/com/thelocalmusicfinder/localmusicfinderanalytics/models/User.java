@@ -21,13 +21,13 @@ public class User {
     @Id
     private UUID id;
 
-    @Column()
+    @Column(columnDefinition = "TEXT")
     private String userAgent;
 
-    @Column()
+    @Column(columnDefinition = "TEXT")
     private String deviceType;
 
-    @Column()
+    @Column(columnDefinition = "TEXT")
     private String ipAddress;
 
     @Column(nullable = false)
