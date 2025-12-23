@@ -49,6 +49,16 @@ public class SessionService {
       newSession.setSessionActivityOverview("User entered the site from " + sessionCampaign.getPlatform() + " and went to the path " + payload.getUrlEntry() + "\n");
       newSession.setCampaign(sessionCampaign);
       sessionRepository.save(newSession);
+    } else {
+      Session activeSession = optionalSession.get();
+      if (activeSession.getCampaign().getPlatform().equals("Unknown")) {
+        Campaign newCampaign = this.getSessionCampaign(payload.getCampaignId(), payload.getReferer());
+        if (!newCampaign.getPlatform().equals("Unknown")) {
+          activeSession.setCampaign(newCampaign);
+          activeSession.setUrlEntry(payload.getUrlEntry());
+          activeSession.setSessionActivityOverview("User entered the site from " + newCampaign.getPlatform() + " and went to the path " + payload.getUrlEntry() + "\n");
+        }
+      }
     }
   }
 
