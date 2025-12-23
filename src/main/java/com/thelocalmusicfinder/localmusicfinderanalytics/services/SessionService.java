@@ -56,7 +56,8 @@ public class SessionService {
         if (!newCampaign.getPlatform().equals("Unknown")) {
           activeSession.setCampaign(newCampaign);
           activeSession.setUrlEntry(payload.getUrlEntry());
-          activeSession.setSessionActivityOverview("User entered the site from " + newCampaign.getPlatform() + " and went to the path " + payload.getUrlEntry() + "\n");
+          String curActivityOverview = activeSession.getSessionActivityOverview();
+          activeSession.setSessionActivityOverview(curActivityOverview + "\nUser entered the site from " + newCampaign.getPlatform() + " and went to the path " + payload.getUrlEntry() + "\n");
         }
       }
     }
