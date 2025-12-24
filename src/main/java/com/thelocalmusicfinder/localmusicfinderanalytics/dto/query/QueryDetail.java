@@ -9,4 +9,6 @@ public class QueryDetail {
   private String name;
   private int total;
   private int totalUnique;
+  private int totalUniqueReturning;
+  private int totalUniqueNew;
 }

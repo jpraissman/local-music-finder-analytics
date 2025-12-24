@@ -13,4 +13,7 @@ public class BasicSessionDTO {
   private int durationInSec;
   private String urlEntry;
   private String platform;
+  private boolean isNewSession;
+  private int numScrolls;
+  private String ipAddress;
 }

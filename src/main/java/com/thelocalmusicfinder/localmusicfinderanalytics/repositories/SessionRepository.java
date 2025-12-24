@@ -31,4 +31,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
    * Finds session linked to user that is after the given time
    */
   Optional<Session> findFirstByUserIdAndLastSessionActivityAfterOrderByLastSessionActivityDesc(UUID userId, Instant cutoff);
+
+  List<Session> findByUserId(UUID userId);
 }

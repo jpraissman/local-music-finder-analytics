@@ -1,6 +1,7 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithUserId;
+import com.thelocalmusicfinder.localmusicfinderanalytics.domain.TotalNumbers;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.QueryDetail;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.SessionQueryResponseDTO;
@@ -42,12 +43,15 @@ public class SessionService {
 
     Optional<Session> optionalSession = getActiveSession(payload.getUserId());
     if (optionalSession.isEmpty()) {
+      boolean isUsersFirstSession = sessionRepository.findByUserId(payload.getUserId()).isEmpty();
+
       Session newSession = new Session();
       Campaign sessionCampaign = getSessionCampaign(payload.getCampaignId(), payload.getReferer());
       newSession.setUser(user);
       newSession.setUrlEntry(payload.getUrlEntry());
       newSession.setSessionActivityOverview("User entered the site from " + sessionCampaign.getPlatform() + " and went to the path " + payload.getUrlEntry() + "\n");
       newSession.setCampaign(sessionCampaign);
+      newSession.setIsUsersFirstSession(isUsersFirstSession);
       sessionRepository.save(newSession);
     } else {
       Session activeSession = optionalSession.get();
@@ -87,6 +91,7 @@ public class SessionService {
         String curActivityOverview = activeSession.getSessionActivityOverview();
         activeSession.setSessionActivityOverview(curActivityOverview + payload.getActivityOverview() + "\n");
       }
+      activeSession.setNumScrolls(activeSession.getNumScrolls() + payload.getNumScrolls());
     }
   }
 
@@ -122,29 +127,22 @@ public class SessionService {
     List<QueryDetail> pathDetails = this.getPathDetails(filteredSessions);
     List<BasicSessionDTO> sessionDTOs = this.getSessionDetails(filteredSessions);
 
-    int total = filteredSessions.size();
-    int totalUnique = getTotalUniqueUsers(filteredSessions);
+    TotalNumbers totalNumbers = QueryResponseUtils.getTotalNumbers(filteredSessions);
 
     return SessionQueryResponseDTO.builder()
-            .total(total)
-            .totalUnique(totalUnique)
+            .total(totalNumbers.total())
+            .totalUnique(totalNumbers.totalUnique())
+            .totalUniqueNew(totalNumbers.totalUniqueNew())
+            .totalUniqueReturning(totalNumbers.totalUniqueReturning())
             .sublayerDetails(sublayerDetails)
             .pathDetails(pathDetails)
             .sessions(sessionDTOs).build();
   }
 
-  private int getTotalUniqueUsers(List<Session> events) {
-    List<UUID> allUserIds = new ArrayList<>();
-    for (Session campaignUserEvent : events) {
-      allUserIds.add(campaignUserEvent.getUser().getId());
-    }
-    return QueryResponseUtils.getTotalUnique(allUserIds);
-  }
-
   private List<QueryDetail> getPathDetails(List<Session> sessions) {
     List<NameWithUserId> pathNamesWithUserIds = new ArrayList<>();
     for (Session session : sessions) {
-      pathNamesWithUserIds.add(new NameWithUserId(session.getUrlEntry(), session.getUser().getId()));
+      pathNamesWithUserIds.add(new NameWithUserId(session.getUrlEntry(), session.getUser().getId(), session.getIsUsersFirstSession()));
     }
     return QueryResponseUtils.generateQueryDetailList(pathNamesWithUserIds);
   }
@@ -157,7 +155,10 @@ public class SessionService {
               .userId(session.getUser().getId())
               .durationInSec((int) Duration.between(session.getSessionStart(), session.getLastSessionActivity()).getSeconds())
               .platform(session.getCampaign().getPlatform())
-              .urlEntry(session.getUrlEntry()).build();
+              .urlEntry(session.getUrlEntry())
+              .isNewSession(session.getIsUsersFirstSession())
+              .ipAddress(session.getUser().getIpAddress())
+              .numScrolls(session.getNumScrolls()).build();
       sessionDTOs.add(sessionDTO);
     }
     return sessionDTOs;
@@ -167,7 +168,7 @@ public class SessionService {
     List<NameWithUserId> sublayerNamesWithUserIds = new ArrayList<>();
     for (Session session : sessions) {
       String sublayerName = QueryResponseUtils.getSublayerName(session.getCampaign(), query);
-      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, session.getUser().getId()));
+      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, session.getUser().getId(), session.getIsUsersFirstSession()));
     }
     return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }

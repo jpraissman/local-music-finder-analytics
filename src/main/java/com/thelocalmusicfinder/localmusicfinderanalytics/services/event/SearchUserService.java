@@ -2,6 +2,7 @@ package com.thelocalmusicfinder.localmusicfinderanalytics.services.event;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.LocationInfo;
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithUserId;
+import com.thelocalmusicfinder.localmusicfinderanalytics.domain.TotalNumbers;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateSearchUserEventDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.QueryDetail;
@@ -22,7 +23,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -84,32 +84,33 @@ public class SearchUserService {
     List<QueryDetail> formattedAddresses = getQueryDetails(DetailType.ADDRESS, filteredEvents);
     List<QueryDetail> searchContexts = getQueryDetails(DetailType.SEARCH_CONTEXT, filteredEvents);
 
-    int totalSearches = filteredEvents.size();
-    int uniqueUsersWhoSearched = getUniqueUsersWhoSearched(filteredEvents);
+    TotalNumbers totalNumbers = getTotalNumbers(filteredEvents);
 
     return SearchUserQueryResponseDTO.builder()
             .sublayerDetails(sublayerDetails)
-            .total(totalSearches)
-            .totalUnique(uniqueUsersWhoSearched)
+            .total(totalNumbers.total())
+            .totalUnique(totalNumbers.totalUnique())
+            .totalUniqueNew(totalNumbers.totalUniqueNew())
+            .totalUniqueReturning(totalNumbers.totalUniqueReturning())
             .searchContexts(searchContexts)
             .formattedAddresses(formattedAddresses)
             .counties(counties)
             .towns(towns).build();
   }
 
-  private int getUniqueUsersWhoSearched(List<SearchUserEvent> events) {
-    List<UUID> allUserIds = new ArrayList<>();
+  private TotalNumbers getTotalNumbers(List<SearchUserEvent> events) {
+    List<Session> allSessions = new ArrayList<>();
     for (SearchUserEvent searchUserEvent : events) {
-      allUserIds.add(searchUserEvent.getUser().getId());
+      allSessions.add(searchUserEvent.getSession());
     }
-    return QueryResponseUtils.getTotalUnique(allUserIds);
+    return QueryResponseUtils.getTotalNumbers(allSessions);
   }
 
   private List<QueryDetail> getQueryDetails(DetailType type, List<SearchUserEvent> events) {
     List<NameWithUserId> nameWithUserIds = new ArrayList<>();
     for (SearchUserEvent event : events) {
       String name = convertTypeToString(type, event);
-      nameWithUserIds.add(new NameWithUserId(name, event.getUser().getId()));
+      nameWithUserIds.add(new NameWithUserId(name, event.getUser().getId(), event.getSession().getIsUsersFirstSession()));
     }
     return QueryResponseUtils.generateQueryDetailList(nameWithUserIds);
   }
@@ -118,7 +119,7 @@ public class SearchUserService {
     List<NameWithUserId> sublayerNamesWithUserIds = new ArrayList<>();
     for (SearchUserEvent event : events) {
       String sublayerName = QueryResponseUtils.getSublayerName(event.getCampaign(), query);
-      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, event.getUser().getId()));
+      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, event.getUser().getId(), event.getSession().getIsUsersFirstSession()));
     }
     return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }

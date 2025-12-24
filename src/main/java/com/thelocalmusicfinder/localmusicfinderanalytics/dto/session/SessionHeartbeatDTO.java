@@ -12,4 +12,7 @@ public class SessionHeartbeatDTO {
 
   @NotNull
   private String activityOverview;
+
+  @NotNull
+  private int numScrolls;
 }

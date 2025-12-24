@@ -34,6 +34,12 @@ public class Session {
     @Basic(fetch = FetchType.LAZY)
     private String sessionActivityOverview;
 
+    @Column()
+    private int numScrolls;
+
+    @Column()
+    private Boolean isUsersFirstSession;
+
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
