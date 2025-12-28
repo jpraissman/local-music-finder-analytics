@@ -47,4 +47,16 @@ public class Session {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="campaign_id")
     private Campaign campaign;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof Session session)) return false;
+      return id.equals(session.id);
+    }
+
+    @Override
+    public int hashCode() {
+      return id.hashCode();
+    }
 }
