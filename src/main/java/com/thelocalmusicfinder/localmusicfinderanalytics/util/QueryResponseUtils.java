@@ -42,7 +42,7 @@ public class QueryResponseUtils {
     return null;
   }
 
-  public static TotalNumbers getTotalNumbers(List<Session> sessions) {
+  public static TotalNumbers getTotalNumbers(Set<Session> sessions) {
     int total = sessions.size();
     int totalUnique = 0;
     int totalUniqueNew = 0;
