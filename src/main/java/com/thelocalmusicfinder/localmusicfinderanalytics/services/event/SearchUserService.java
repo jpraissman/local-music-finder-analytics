@@ -103,7 +103,12 @@ public class SearchUserService {
   private TotalNumbers getTotalNumbers(List<SearchUserEvent> events) {
     Set<Session> allUniqueSessions = new HashSet<>();
     for (SearchUserEvent searchUserEvent : events) {
-      allUniqueSessions.add(searchUserEvent.getSession());
+      boolean added = allUniqueSessions.add(searchUserEvent.getSession());
+      if (added) {
+        System.out.println("Added session" +  searchUserEvent.getSession().getId());
+      } else {
+        System.out.println("Didn't add session" +  searchUserEvent.getSession().getId());
+      }
     }
     return QueryResponseUtils.getTotalNumbers(allUniqueSessions);
   }
