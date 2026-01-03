@@ -48,18 +48,15 @@ public class QueryResponseUtils {
     Set<Session> uniqueSessions = new HashSet<>(allSessions);
     int totalUnique = 0;
     int totalUniqueNew = 0;
-    int totalUniqueReturning = 0;
     Set<UUID> uniqueIds = new HashSet<>();
     for (Session session: uniqueSessions) {
       totalUniqueNew += session.getIsUsersFirstSession() ? 1 : 0;
-      totalUniqueReturning += session.getIsUsersFirstSession() ? 0 : 1;
       if (!uniqueIds.contains(session.getUser().getId())) {
         uniqueIds.add(session.getUser().getId());
         totalUnique++;
       }
     }
-    int totalMinusUnique = total - totalUnique;
-    totalUniqueReturning -= totalMinusUnique;
+    int totalUniqueReturning = totalUnique - totalUniqueNew;
 
     return new TotalNumbers(total, totalUnique, totalUniqueNew, totalUniqueReturning);
   }
@@ -81,16 +78,13 @@ public class QueryResponseUtils {
     Set<NameWithUserId> uniqueItems = new HashSet<>(allItems);
     for (NameWithUserId item : uniqueItems) {
       int newCount = item.isNewSession() ? 1 : 0;
-      int returningCount = item.isNewSession() ? 0 : 1;
 
       if (queryDetailsMap.containsKey(item.name())) {
         QueryDetailWithUniqueUsers queryDetailWithUniqueUsers = queryDetailsMap.get(item.name());
         QueryDetail queryDetail = queryDetailWithUniqueUsers.queryDetail();
         Set<UUID> uniqueUsers = queryDetailWithUniqueUsers.uniqueUsers();
 
-        // we will take care of fixing these values at the end of the method
         queryDetail.setTotalUniqueNew(queryDetail.getTotalUniqueNew() + newCount);
-        queryDetail.setTotalUniqueReturning(queryDetail.getTotalUniqueReturning() + returningCount);
 
         if (!uniqueUsers.contains(item.userId())) {
           queryDetail.setTotalUnique(queryDetail.getTotalUnique() + 1);
@@ -101,18 +95,18 @@ public class QueryResponseUtils {
         uniqueUsers.add(item.userId());
 
         QueryDetail newQueryDetail = new QueryDetail(item.name(),
-                nameToTotalCountMap.get(item.name()), 1, returningCount, newCount);
+                nameToTotalCountMap.get(item.name()), 1, 0, newCount);
 
         queryDetailsMap.put(item.name(), new QueryDetailWithUniqueUsers(newQueryDetail, uniqueUsers));
       }
     }
 
+    // finalize totalUniqueReturning counts
     List<QueryDetail> result = new ArrayList<>();
     for (QueryDetailWithUniqueUsers item : queryDetailsMap.values()) {
       QueryDetail queryDetail = item.queryDetail();
-      int totalMinusUnique = queryDetail.getTotal() - queryDetail.getTotalUnique();
-      // the totalUniqueReturning value should subtract this value to be correct
-      queryDetail.setTotalUniqueReturning(queryDetail.getTotalUniqueReturning() - totalMinusUnique);
+      int totalUniqueReturning = queryDetail.getTotalUnique() - queryDetail.getTotalUniqueNew();
+      queryDetail.setTotalUniqueReturning(totalUniqueReturning);
       result.add(queryDetail);
     }
     return result;
