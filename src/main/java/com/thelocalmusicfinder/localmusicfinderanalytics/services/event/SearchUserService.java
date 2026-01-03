@@ -21,10 +21,8 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -101,11 +99,11 @@ public class SearchUserService {
   }
 
   private TotalNumbers getTotalNumbers(List<SearchUserEvent> events) {
-    Set<Session> allUniqueSessions = new HashSet<>();
+    List<Session> allSessions = new ArrayList<>();
     for (SearchUserEvent searchUserEvent : events) {
-      allUniqueSessions.add(searchUserEvent.getSession());
+      allSessions.add(searchUserEvent.getSession());
     }
-    return QueryResponseUtils.getTotalNumbers(allUniqueSessions);
+    return QueryResponseUtils.getTotalNumbers(allSessions);
   }
 
   private List<QueryDetail> getQueryDetails(DetailType type, List<SearchUserEvent> events) {
