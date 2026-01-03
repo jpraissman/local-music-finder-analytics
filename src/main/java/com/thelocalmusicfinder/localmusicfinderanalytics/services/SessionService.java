@@ -10,7 +10,6 @@ import com.thelocalmusicfinder.localmusicfinderanalytics.dto.session.SessionHear
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.session.StartSessionDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.SearchUserEvent;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.Session;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.CampaignRepository;
@@ -23,10 +22,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import jakarta.transaction.Transactional;
@@ -130,8 +127,7 @@ public class SessionService {
     List<QueryDetail> pathDetails = this.getPathDetails(filteredSessions);
     List<BasicSessionDTO> sessionDTOs = this.getSessionDetails(filteredSessions);
 
-    Set<Session> allUniqueSessions = new HashSet<>(filteredSessions);
-    TotalNumbers totalNumbers = QueryResponseUtils.getTotalNumbers(allUniqueSessions);
+    TotalNumbers totalNumbers = QueryResponseUtils.getTotalNumbers(filteredSessions);
 
     return SessionQueryResponseDTO.builder()
             .total(totalNumbers.total())
