@@ -13,6 +13,6 @@ public class BaseQueryResponseDTO {
   private int totalUniqueReturning;
   private int totalUniqueNew;
   private int totalUniqueMobile;
-  private long avgDuration;
+  private long avgDurationInSec;
   private List<QueryDetail> sublayerDetails;
 }

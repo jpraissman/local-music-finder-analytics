@@ -93,7 +93,7 @@ public class SearchUserService {
             .totalUniqueNew(totalNumbers.totalUniqueNew())
             .totalUniqueReturning(totalNumbers.totalUniqueReturning())
             .totalUniqueMobile(totalNumbers.totalUniqueMobile())
-            .avgDuration(totalNumbers.avgDuration())
+            .avgDurationInSec(totalNumbers.avgDurationInSec())
             .searchContexts(searchContexts)
             .formattedAddresses(formattedAddresses)
             .counties(counties)

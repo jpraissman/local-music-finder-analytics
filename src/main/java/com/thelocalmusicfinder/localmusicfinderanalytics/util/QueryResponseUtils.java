@@ -96,7 +96,7 @@ public class QueryResponseUtils {
           queryDetail.setTotalUnique(queryDetail.getTotalUnique() + 1);
           queryDetail.setTotalUniqueNew(queryDetail.getTotalUniqueNew() + newCount);
           queryDetail.setTotalUniqueMobile(queryDetail.getTotalUniqueMobile() + mobileCount);
-          queryDetail.setTotalUniqueDuration(queryDetail.getTotalUniqueDuration() + sessionDuration);
+          queryDetail.setTotalUniqueDurationInSec(queryDetail.getTotalUniqueDurationInSec() + sessionDuration);
           uniqueUsers.add(item.session().getUser().getId());
         }
       } else {

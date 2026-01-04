@@ -135,7 +135,7 @@ public class SessionService {
             .totalUniqueNew(totalNumbers.totalUniqueNew())
             .totalUniqueReturning(totalNumbers.totalUniqueReturning())
             .totalUniqueMobile(totalNumbers.totalUniqueMobile())
-            .avgDuration(totalNumbers.avgDuration())
+            .avgDurationInSec(totalNumbers.avgDurationInSec())
             .sublayerDetails(sublayerDetails)
             .pathDetails(pathDetails)
             .sessions(sessionDTOs).build();
