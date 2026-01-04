@@ -54,11 +54,11 @@ public class QueryResponseUtils {
     Set<UUID> uniqueIds = new HashSet<>();
     for (Session session: uniqueSessions) {
       totalDuration += Duration.between(session.getSessionStart(), session.getLastSessionActivity()).getSeconds();
-      totalUniqueNew += session.getIsUsersFirstSession() ? 1 : 0;
-      totalUniqueMobile += session.getUser().getDeviceType().equals("Phone") ? 1 : 0;
       if (!uniqueIds.contains(session.getUser().getId())) {
         uniqueIds.add(session.getUser().getId());
         totalUnique++;
+        totalUniqueNew += session.getIsUsersFirstSession() ? 1 : 0;
+        totalUniqueMobile += session.getUser().getDeviceType().equals("Phone") ? 1 : 0;
       }
     }
     int totalUniqueReturning = totalUnique - totalUniqueNew;
