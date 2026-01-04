@@ -1,6 +1,6 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services;
 
-import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithUserId;
+import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithSession;
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.TotalNumbers;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.QueryDetail;
@@ -134,16 +134,17 @@ public class SessionService {
             .totalUnique(totalNumbers.totalUnique())
             .totalUniqueNew(totalNumbers.totalUniqueNew())
             .totalUniqueReturning(totalNumbers.totalUniqueReturning())
+            .totalUniqueMobile(totalNumbers.totalUniqueMobile())
+            .avgDuration(totalNumbers.avgDuration())
             .sublayerDetails(sublayerDetails)
             .pathDetails(pathDetails)
             .sessions(sessionDTOs).build();
   }
 
   private List<QueryDetail> getPathDetails(List<Session> sessions) {
-    List<NameWithUserId> pathNamesWithUserIds = new ArrayList<>();
+    List<NameWithSession> pathNamesWithUserIds = new ArrayList<>();
     for (Session session : sessions) {
-      pathNamesWithUserIds.add(new NameWithUserId(session.getUrlEntry(), session.getUser().getId(),
-              session.getIsUsersFirstSession(), session.getUser().getDeviceType().equals("Phone")));
+      pathNamesWithUserIds.add(new NameWithSession(session.getUrlEntry(), session));
     }
     return QueryResponseUtils.generateQueryDetailList(pathNamesWithUserIds);
   }
@@ -166,11 +167,10 @@ public class SessionService {
   }
 
   private List<QueryDetail> getSublayerDetails(List<Session> sessions, AnalyticsQueryDTO query) {
-    List<NameWithUserId> sublayerNamesWithUserIds = new ArrayList<>();
+    List<NameWithSession> sublayerNamesWithUserIds = new ArrayList<>();
     for (Session session : sessions) {
       String sublayerName = QueryResponseUtils.getSublayerName(session.getCampaign(), query);
-      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, session.getUser().getId(),
-              session.getIsUsersFirstSession(), session.getUser().getDeviceType().equals("Phone")));
+      sublayerNamesWithUserIds.add(new NameWithSession(sublayerName, session));
     }
     return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }

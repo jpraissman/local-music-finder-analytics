@@ -12,4 +12,5 @@ public class QueryDetail {
   private int totalUniqueReturning;
   private int totalUniqueNew;
   private int totalUniqueMobile;
+  private long totalUniqueDuration;
 }

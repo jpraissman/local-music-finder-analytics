@@ -1,7 +1,7 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services.event;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.LocationInfo;
-import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithUserId;
+import com.thelocalmusicfinder.localmusicfinderanalytics.domain.NameWithSession;
 import com.thelocalmusicfinder.localmusicfinderanalytics.domain.TotalNumbers;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.query.AnalyticsQueryDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateSearchUserEventDTO;
@@ -92,6 +92,8 @@ public class SearchUserService {
             .totalUnique(totalNumbers.totalUnique())
             .totalUniqueNew(totalNumbers.totalUniqueNew())
             .totalUniqueReturning(totalNumbers.totalUniqueReturning())
+            .totalUniqueMobile(totalNumbers.totalUniqueMobile())
+            .avgDuration(totalNumbers.avgDuration())
             .searchContexts(searchContexts)
             .formattedAddresses(formattedAddresses)
             .counties(counties)
@@ -107,21 +109,19 @@ public class SearchUserService {
   }
 
   private List<QueryDetail> getQueryDetails(DetailType type, List<SearchUserEvent> events) {
-    List<NameWithUserId> nameWithUserIds = new ArrayList<>();
+    List<NameWithSession> nameWithUserIds = new ArrayList<>();
     for (SearchUserEvent event : events) {
       String name = convertTypeToString(type, event);
-      nameWithUserIds.add(new NameWithUserId(name, event.getUser().getId(),
-              event.getSession().getIsUsersFirstSession(), event.getUser().getDeviceType().equals("Phone")));
+      nameWithUserIds.add(new NameWithSession(name, event.getSession()));
     }
     return QueryResponseUtils.generateQueryDetailList(nameWithUserIds);
   }
 
   private List<QueryDetail> getSublayerDetails(List<SearchUserEvent> events, AnalyticsQueryDTO query) {
-    List<NameWithUserId> sublayerNamesWithUserIds = new ArrayList<>();
+    List<NameWithSession> sublayerNamesWithUserIds = new ArrayList<>();
     for (SearchUserEvent event : events) {
       String sublayerName = QueryResponseUtils.getSublayerName(event.getCampaign(), query);
-      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, event.getUser().getId(),
-              event.getSession().getIsUsersFirstSession(), event.getUser().getDeviceType().equals("Phone")));
+      sublayerNamesWithUserIds.add(new NameWithSession(sublayerName, event.getSession()));
     }
     return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }
