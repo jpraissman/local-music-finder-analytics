@@ -111,7 +111,7 @@ public class SearchUserService {
     for (SearchUserEvent event : events) {
       String name = convertTypeToString(type, event);
       nameWithUserIds.add(new NameWithUserId(name, event.getUser().getId(),
-              event.getSession().getIsUsersFirstSession(), event.getUser().getDeviceType().equals("Mobile")));
+              event.getSession().getIsUsersFirstSession(), event.getUser().getDeviceType().equals("Phone")));
     }
     return QueryResponseUtils.generateQueryDetailList(nameWithUserIds);
   }
@@ -121,7 +121,7 @@ public class SearchUserService {
     for (SearchUserEvent event : events) {
       String sublayerName = QueryResponseUtils.getSublayerName(event.getCampaign(), query);
       sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, event.getUser().getId(),
-              event.getSession().getIsUsersFirstSession(), event.getUser().getDeviceType().equals("Mobile")));
+              event.getSession().getIsUsersFirstSession(), event.getUser().getDeviceType().equals("Phone")));
     }
     return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }
