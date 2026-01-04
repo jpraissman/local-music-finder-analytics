@@ -142,7 +142,8 @@ public class SessionService {
   private List<QueryDetail> getPathDetails(List<Session> sessions) {
     List<NameWithUserId> pathNamesWithUserIds = new ArrayList<>();
     for (Session session : sessions) {
-      pathNamesWithUserIds.add(new NameWithUserId(session.getUrlEntry(), session.getUser().getId(), session.getIsUsersFirstSession()));
+      pathNamesWithUserIds.add(new NameWithUserId(session.getUrlEntry(), session.getUser().getId(),
+              session.getIsUsersFirstSession(), session.getUser().getDeviceType().equals("Mobile")));
     }
     return QueryResponseUtils.generateQueryDetailList(pathNamesWithUserIds);
   }
@@ -168,7 +169,8 @@ public class SessionService {
     List<NameWithUserId> sublayerNamesWithUserIds = new ArrayList<>();
     for (Session session : sessions) {
       String sublayerName = QueryResponseUtils.getSublayerName(session.getCampaign(), query);
-      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, session.getUser().getId(), session.getIsUsersFirstSession()));
+      sublayerNamesWithUserIds.add(new NameWithUserId(sublayerName, session.getUser().getId(),
+              session.getIsUsersFirstSession(), session.getUser().getDeviceType().equals("Mobile")));
     }
     return QueryResponseUtils.generateQueryDetailList(sublayerNamesWithUserIds);
   }

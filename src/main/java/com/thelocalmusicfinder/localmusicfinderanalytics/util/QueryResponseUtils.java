@@ -78,6 +78,7 @@ public class QueryResponseUtils {
     Set<NameWithUserId> uniqueItems = new HashSet<>(allItems);
     for (NameWithUserId item : uniqueItems) {
       int newCount = item.isNewSession() ? 1 : 0;
+      int mobileCount = item.isMobile() ? 1 : 0;
 
       if (queryDetailsMap.containsKey(item.name())) {
         QueryDetailWithUniqueUsers queryDetailWithUniqueUsers = queryDetailsMap.get(item.name());
@@ -85,6 +86,7 @@ public class QueryResponseUtils {
         Set<UUID> uniqueUsers = queryDetailWithUniqueUsers.uniqueUsers();
 
         queryDetail.setTotalUniqueNew(queryDetail.getTotalUniqueNew() + newCount);
+        queryDetail.setTotalUniqueMobile(queryDetail.getTotalUniqueMobile() + mobileCount);
 
         if (!uniqueUsers.contains(item.userId())) {
           queryDetail.setTotalUnique(queryDetail.getTotalUnique() + 1);
@@ -95,7 +97,7 @@ public class QueryResponseUtils {
         uniqueUsers.add(item.userId());
 
         QueryDetail newQueryDetail = new QueryDetail(item.name(),
-                nameToTotalCountMap.get(item.name()), 1, 0, newCount);
+                nameToTotalCountMap.get(item.name()), 1, 0, newCount, mobileCount);
 
         queryDetailsMap.put(item.name(), new QueryDetailWithUniqueUsers(newQueryDetail, uniqueUsers));
       }
