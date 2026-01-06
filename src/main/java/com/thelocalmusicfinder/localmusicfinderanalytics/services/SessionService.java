@@ -10,7 +10,6 @@ import com.thelocalmusicfinder.localmusicfinderanalytics.dto.session.SessionHear
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.session.StartSessionDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.campaign.CreateCampaignDTO;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.Campaign;
-import com.thelocalmusicfinder.localmusicfinderanalytics.models.SearchUserEvent;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.Session;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.CampaignRepository;

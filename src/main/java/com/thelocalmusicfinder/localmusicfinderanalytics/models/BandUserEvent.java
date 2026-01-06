@@ -29,4 +29,8 @@ public class BandUserEvent {
     @CreationTimestamp
     @Column(name="timestamp", nullable=false, updatable=false)
     private Instant timestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id")
+    private Session session;
 }

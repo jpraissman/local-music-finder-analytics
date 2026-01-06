@@ -1,10 +1,12 @@
 package com.thelocalmusicfinder.localmusicfinderanalytics.services.event;
 
 import com.thelocalmusicfinder.localmusicfinderanalytics.dto.eventcreation.CreateBandUserDTO;
+import com.thelocalmusicfinder.localmusicfinderanalytics.models.Session;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.BandUserEvent;
 import com.thelocalmusicfinder.localmusicfinderanalytics.models.User;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.BandUserRepository;
 import com.thelocalmusicfinder.localmusicfinderanalytics.repositories.UserRepository;
+import com.thelocalmusicfinder.localmusicfinderanalytics.services.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class BandUserService {
     private final BandUserRepository bandUserRepository;
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private SessionService sessionService;
 
     //private final BandUserRepository bandUserRepository;
     public BandUserEvent createEvent(CreateBandUserDTO payload) {
@@ -27,9 +31,14 @@ public class BandUserService {
         if(user.isEmpty()){
             throw new IllegalArgumentException("user id " + payload.getUserId() + " not present in user table");
         }
+        Optional<Session> session = sessionService.getActiveSession(user.get().getId());
+        if(session.isEmpty()){
+            throw new IllegalArgumentException("session id not found for user id: " + payload.getUserId());
+        }
         BandUserEvent bandUserEvent = new BandUserEvent();
         bandUserEvent.setUser(user.get());
         bandUserEvent.setBandId(payload.getBandId());
+        bandUserEvent.setSession(session.get());
 
         return bandUserRepository.save(bandUserEvent);
     }
